@@ -54,16 +54,6 @@ public:
       return data.empty() ? fc::variant() : abi_ser.binary_to_variant( "currency_stats", data, abi_serializer_max_time );
    }
 
-   /*
-   fc::variant get_account( account_name acc, const string& symbolname)
-   {
-      auto symb = eosio::chain::symbol::from_string(symbolname);
-      auto symbol_code = symb.to_symbol_code().value;
-      vector<char> data = get_row_by_account( N(eosio.token), acc, N(accounts), symbol_code );
-      return data.empty() ? fc::variant() : abi_ser.binary_to_variant( "account", data, abi_serializer_max_time );
-   }
-   */
-
    fc::variant get_creditor( account_name issuer, int64_t creditor)
    {
       vector<char> data = get_row_by_account( N(eosio.stok), issuer.value, N(accounts), creditor );
@@ -90,21 +80,22 @@ public:
       );
    }
 
-   action_result retire( account_name issuer, asset quant_st, asset quant_ut, string memo ) {
-      return push_action( issuer, N(retire), mvo()
-           ( "issuer", issuer)
-           ( "quant_st", quant_st)
-           ( "quant_ut", quant_ut)
-           ( "memo", memo)
-      );
-   }
-
    action_result transfer( account_name issuer,
                   int64_t creditor_id,
                   asset   quant_st,
                   asset   quant_ut,
                   string  memo ) {
       return push_action( issuer, N(transfer), mvo()
+           ( "issuer", issuer)
+           ( "creditor_id", creditor_id)
+           ( "quant_st", quant_st)
+           ( "quant_ut", quant_ut)
+           ( "memo", memo)
+      );
+   }
+
+   action_result retire( account_name issuer, int64_t creditor_id, asset quant_st, asset quant_ut, string memo ) {
+      return push_action( issuer, N(retire), mvo()
            ( "issuer", issuer)
            ( "creditor_id", creditor_id)
            ( "quant_st", quant_st)
@@ -226,41 +217,13 @@ BOOST_FIXTURE_TEST_CASE( issue_tests, eosio_token_tester ) try {
 
 } FC_LOG_AND_RETHROW()
 
-BOOST_FIXTURE_TEST_CASE( retire_tests, eosio_token_tester ) try {
-
-   auto token = create( N(alice), asset::from_string("1000.000 ST"), asset::from_string("1000.000 UT"));
-   produce_blocks(1);
-
-   BOOST_REQUIRE_EQUAL( success(), issue( N(alice), asset::from_string("500.000 ST"), asset::from_string("500.000 UT"), "hola" ) );
-
-   auto stats = get_stats(N(alice));
-   REQUIRE_MATCHING_OBJECT( stats, mvo()
-      ("supply_st", "500.000 ST")
-      ("supply_ut", "500.000 UT")
-      ("max_supply_st", "1000.000 ST")
-      ("max_supply_ut", "1000.000 UT")
-      ("issuer", "alice")
-   );
-
-   BOOST_REQUIRE_EQUAL( success(), retire( N(alice), asset::from_string("200.000 ST"), asset::from_string("200.000 UT"), "hola" ) );
-   stats = get_stats(N(alice));
-   // BOOST_TEST_MESSAGE(fc::json::to_pretty_string(stats));
-   REQUIRE_MATCHING_OBJECT( stats, mvo()
-      ("supply_st", "300.000 ST")
-      ("supply_ut", "300.000 UT")
-      ("max_supply_st", "1000.000 ST")
-      ("max_supply_ut", "1000.000 UT")
-      ("issuer", "alice")
-   );
-
-} FC_LOG_AND_RETHROW()
-
 BOOST_FIXTURE_TEST_CASE( transfer_tests, eosio_token_tester ) try {
 
    auto token = create( N(alice), asset::from_string("1000.000 ST"), asset::from_string("1000.000 UT"));;
    produce_blocks(1);
 
    issue( N(alice), asset::from_string("1000.000 ST"), asset::from_string("1000.000 UT"), "hola" );
+   produce_blocks(1);
 
    auto stats = get_stats(N(alice));
    REQUIRE_MATCHING_OBJECT( stats, mvo()
@@ -273,6 +236,7 @@ BOOST_FIXTURE_TEST_CASE( transfer_tests, eosio_token_tester ) try {
 
    auto creditor_id = 1;
    transfer( N(alice), creditor_id, asset::from_string("300.000 ST"), asset::from_string("300.000 UT"), "hola" );
+   produce_blocks(1);
 
    auto balance_1 = get_creditor(N(alice), 1);
    BOOST_TEST_MESSAGE(fc::json::to_pretty_string(balance_1));
@@ -287,43 +251,86 @@ BOOST_FIXTURE_TEST_CASE( transfer_tests, eosio_token_tester ) try {
 
 } FC_LOG_AND_RETHROW()
 
-BOOST_FIXTURE_TEST_CASE( clear_tests, eosio_token_tester ) try {
+BOOST_FIXTURE_TEST_CASE( retire_tests, eosio_token_tester ) try {
 
-   auto token = create( N(alice), asset::from_string("1000.000 ST"), asset::from_string("1000.000 UT"));;
+   auto token = create( N(alice), asset::from_string("1000 ST"), asset::from_string("1000 UT"));;
    produce_blocks(1);
 
-   issue( N(alice), asset::from_string("1000.000 ST"), asset::from_string("1000.000 UT"), "hola" );
+   issue( N(alice), asset::from_string("1000 ST"), asset::from_string("1000 UT"), "hola" );
+   produce_blocks(1);
 
    auto stats = get_stats(N(alice));
    REQUIRE_MATCHING_OBJECT( stats, mvo()
-      ("supply_st", "1000.000 ST")
-      ("supply_ut", "1000.000 UT")
-      ("max_supply_st", "1000.000 ST")
-      ("max_supply_ut", "1000.000 UT")
+      ("supply_st", "1000 ST")
+      ("supply_ut", "1000 UT")
+      ("max_supply_st", "1000 ST")
+      ("max_supply_ut", "1000 UT")
       ("issuer", "alice")
    );
 
    auto creditor_id = 1;
-   transfer( N(alice), creditor_id, asset::from_string("300.000 ST"), asset::from_string("300.000 UT"), "채권 정보입니다." );
-   auto balance_1 = get_creditor(N(alice), 1);
+   transfer( N(alice), creditor_id, asset::from_string("300 ST"), asset::from_string("300 UT"), "transfer" );
+   produce_blocks(1);
+
+   BOOST_TEST_MESSAGE(retire( N(alice), creditor_id, asset::from_string("100 ST"), asset::from_string("200 UT"), "retire" ));
+   produce_blocks(1);
+
+   auto balance_1 = get_creditor(N(alice), creditor_id);
+   BOOST_TEST_MESSAGE(fc::json::to_pretty_string(balance_1));
    REQUIRE_MATCHING_OBJECT( balance_1, mvo()
       ("creditor_id", 1)
-      ("balance_st", "300.000 ST")
-      ("balance_ut", "300.000 UT")
+      ("balance_st", "200 ST")
+      ("balance_ut", "100 UT")
       ("dividend", "")
       ("bond_yield", "")
       ("expr_yield", "")
    );
 
-   clear( N(alice), 1, asset::from_string("0.000 ST"), asset::from_string("0.000 UT"), "2.0", "3.1", "4.1", "청산된 정보입니다.");
+} FC_LOG_AND_RETHROW()
+
+BOOST_FIXTURE_TEST_CASE( clear_tests, eosio_token_tester ) try {
+
+   auto token = create( N(alice), asset::from_string("100 ST"), asset::from_string("100 UT"));;
+   produce_blocks(1);
+
+   issue( N(alice), asset::from_string("60 ST"), asset::from_string("60 UT"), "hola" );
+
+   auto stats = get_stats(N(alice));
+   REQUIRE_MATCHING_OBJECT( stats, mvo()
+      ("supply_st", "60 ST")
+      ("supply_ut", "60 UT")
+      ("max_supply_st", "100 ST")
+      ("max_supply_ut", "100 UT")
+      ("issuer", "alice")
+   );
+
+   auto creditor_id = 1;
+   transfer( N(alice), creditor_id, asset::from_string("2 ST"), asset::from_string("2 UT"), "채권 정보입니다." );
+   produce_blocks(1);
+
+   auto balance_1 = get_creditor(N(alice), 1);
+   REQUIRE_MATCHING_OBJECT( balance_1, mvo()
+      ("creditor_id", 1)
+      ("balance_st", "2 ST")
+      ("balance_ut", "2 UT")
+      ("dividend", "")
+      ("bond_yield", "")
+      ("expr_yield", "")
+   );
+
+   retire( N(alice), creditor_id, asset::from_string("0 ST"), asset::from_string("2 UT"), "채권 정보입니다." );
+   produce_blocks(1);
+
+   clear( N(alice), 1, asset::from_string("2 ST"), asset::from_string("0 UT"), "2.0", "3.1", "4.1", "청산된 정보입니다.");
+   produce_blocks(1);
 
    auto balance_11 = get_creditor(N(alice), 1);
-   BOOST_TEST_MESSAGE(fc::json::to_pretty_string(balance_11));
+   //BOOST_TEST_MESSAGE(fc::json::to_pretty_string(balance_11));
 
    REQUIRE_MATCHING_OBJECT( balance_11, mvo()
       ("creditor_id", 1)
-      ("balance_st", "0.000 ST")
-      ("balance_ut", "0.000 UT")
+      ("balance_st", "0 ST")
+      ("balance_ut", "0 UT")
       ("dividend", "2.0")
       ("bond_yield", "3.1")
       ("expr_yield", "4.1")

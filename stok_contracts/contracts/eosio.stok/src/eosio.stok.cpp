@@ -72,49 +72,8 @@ void token::issue( name issuer, asset quant_st, asset quant_ut, string memo )
     });
 }
 
-void token::retire( name issuer, asset quant_st, asset quant_ut, string memo )
+void token::transfer( name issuer, int64_t creditor_id, asset quant_st, asset quant_ut, string  memo )
 {
-    auto sym_st = quant_st.symbol;
-    auto sym_ut = quant_ut.symbol;
-    check( sym_st.is_valid(), "invalid UT symbol name" );
-    check( sym_ut.is_valid(), "invalid ST symbol name" );
-
-    check( memo.size() <= 256, "memo has more than 256 bytes" );
-
-    stats statstable( _self, issuer.value );
-    auto existing = statstable.find( issuer.value );
-    check( existing != statstable.end(), "token with issuer does not exist, create token before issue" );
-    const auto& st = *existing;
-
-    check(issuer == st.issuer, "dismatch issuer");
-
-    require_auth( st.issuer );
-
-    check( quant_st.is_valid(), "invalid ST quantity" );
-    check( quant_st.amount > 0, "must issue positive ST quantity" );
-
-    check( quant_ut.is_valid(), "invalid UT quantity" );
-    check( quant_ut.amount > 0, "must issue positive UT quantity" );
-
-    check( quant_st.symbol == st.supply_st.symbol, "ST symbol precision mismatch" );
-    check( quant_st.amount <= st.max_supply_st.amount - st.supply_st.amount, "ST quantity exceeds available supply");
-
-    check( quant_ut.symbol == st.supply_ut.symbol, "UT symbol precision mismatch" );
-    check( quant_ut.amount <= st.max_supply_ut.amount - st.supply_ut.amount, "UT quantity exceeds available supply");
-
-    statstable.modify( st, same_payer, [&]( auto& s ) {
-       s.supply_st -= quant_st;
-       s.supply_ut -= quant_ut;
-    });
-}
-
-void token::transfer( name    issuer,
-                      int64_t creditor_id,
-                      asset   quant_st,
-                      asset   quant_ut,
-                      string  memo )
-{
-
     require_auth( issuer );
 
     stats statstable( _self, issuer.value );
@@ -137,6 +96,62 @@ void token::transfer( name    issuer,
     check( quant_ut.symbol == st.supply_ut.symbol, "UT symbol precision mismatch" );
 
     add_balance( issuer, creditor_id, quant_st, quant_ut );
+}
+
+void token::retire( name issuer, int64_t creditor_id, asset quant_st, asset quant_ut, string memo )
+{
+    require_auth( issuer );
+    accounts acnts( _self, issuer.value );
+    auto it = acnts.find( creditor_id );
+    check( it != acnts.end(), "Balance row already cleared or ever existed. Action won't have any effect." );
+
+    const auto& acc = *it;
+
+    stats statstable( _self, issuer.value );
+    auto existing = statstable.find( issuer.value );
+    check( existing != statstable.end(), "token with issuer does not exist, create token before issue" );
+    const auto& st = *existing;
+
+    check(issuer == st.issuer, "dismatch issuer");
+    require_auth( st.issuer );
+
+    auto sym_st = quant_st.symbol;
+    auto sym_ut = quant_ut.symbol;
+    check( sym_st.is_valid(), "invalid UT symbol name" );
+    check( sym_ut.is_valid(), "invalid ST symbol name" );
+
+    check( memo.size() <= 256, "memo has more than 256 bytes" );
+
+    check( quant_st.is_valid(), "invalid ST quantity" );
+    check( quant_st.amount >= 0, "must retire >=0 ST quantity" );
+
+    check( quant_ut.is_valid(), "invalid UT quantity" );
+    check( quant_ut.amount >= 0, "must retire >=0 UT quantity" );
+
+    /*
+    check( quant_st.symbol == st.supply_st.symbol, "ST symbol precision mismatch" );
+    check( quant_st.amount <= st.max_supply_st.amount - st.supply_st.amount, "ST quantity exceeds available supply");
+
+    check( quant_ut.symbol == st.supply_ut.symbol, "UT symbol precision mismatch" );
+    check( quant_ut.amount <= st.max_supply_ut.amount - st.supply_ut.amount, "UT quantity exceeds available supply");
+    */
+
+    check( quant_st.symbol == acc.balance_st.symbol, "ST symbol precision mismatch" );
+    check( quant_st.amount <= acc.balance_st.amount, "ST quantity exceeds available balance");
+
+    check( quant_ut.symbol == acc.balance_ut.symbol, "UT symbol precision mismatch" );
+    check( quant_ut.amount <= acc.balance_ut.amount, "UT quantity exceeds available balance");
+
+    acnts.modify( it, same_payer, [&]( auto& a ) {
+       a.balance_st -= quant_st;
+       a.balance_ut -= quant_ut;
+    });
+    /*
+    statstable.modify( st, same_payer, [&]( auto& s ) {
+       s.supply_st -= quant_st;
+       s.supply_ut -= quant_ut;
+    });
+    */
 }
 
 void token::add_balance( name issuer, int64_t creditor_id, asset quant_st, asset quant_ut)
@@ -164,14 +179,22 @@ void token::clear( name issuer, int64_t creditor_id, asset quant_st, asset quant
    auto it = acnts.find( creditor_id );
    check( it != acnts.end(), "Balance row already cleared or ever existed. Action won't have any effect." );
 
+   auto acc = *it;
+
+   check( quant_st.symbol == acc.balance_st.symbol, "ST symbol precision mismatch" );
+   check( quant_st.amount <= acc.balance_st.amount, "ST quantity exceeds available balance");
+
+   check( quant_ut.symbol == acc.balance_ut.symbol, "UT symbol precision mismatch" );
+   check( quant_ut.amount <= acc.balance_ut.amount, "UT quantity exceeds available balance");
+
    check( dividend.size() <= 20, "dividend has more than 20 bytes" );
    check( bond_yield.size() <= 10, "bond_yield has more than 10 bytes" );
    check( expr_yield.size() <= 10, "expr_yield has more than 10 bytes" );
    check( memo.size() <= 256, "memo has more than 256 bytes" );
 
    acnts.modify( it, same_payer, [&]( auto& a ) {
-      a.balance_st = quant_st;
-      a.balance_ut = quant_ut;
+      a.balance_st -= quant_st;
+      a.balance_ut -= quant_ut;
       a.dividend = dividend;
       a.bond_yield = bond_yield;
       a.expr_yield = expr_yield;

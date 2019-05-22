@@ -146,6 +146,10 @@
                     "type": "name"
                 },
                 {
+                    "name": "creditor_id",
+                    "type": "int64"
+                },
+                {
                     "name": "quant_st",
                     "type": "asset"
                 },

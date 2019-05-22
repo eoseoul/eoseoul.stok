@@ -30,14 +30,10 @@ namespace eosio {
          void issue( name issuer, asset quant_st, asset quant_ut, string memo );
 
          [[eosio::action]]
-         void retire( name issuer, asset quant_st, asset quant_ut, string memo );
+         void transfer( name issuer, int64_t creditor_id, asset quant_st, asset quant_ut, string  memo );
 
          [[eosio::action]]
-         void transfer( name    issuer,
-                        int64_t creditor_id,
-                        asset   quant_st,
-                        asset   quant_ut,
-                        string  memo );
+         void retire( name issuer, int64_t creditor_id, asset quant_st, asset quant_ut, string memo );
 
          [[eosio::action]]
          void clear( name    issuer,
@@ -74,7 +70,6 @@ namespace eosio {
          typedef eosio::multi_index< "accounts"_n, account > accounts;
          typedef eosio::multi_index< "stat"_n, currency_stats > stats;
 
-         // void sub_balance( name owner, asset value );
          void add_balance( name issuer, int64_t creditor, asset quant_st, asset quant_ut );
    };
 
