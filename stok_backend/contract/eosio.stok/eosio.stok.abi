@@ -1,0 +1,234 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.1",
+    "types": [],
+    "structs": [
+        {
+            "name": "account",
+            "base": "",
+            "fields": [
+                {
+                    "name": "creditor_id",
+                    "type": "int64"
+                },
+                {
+                    "name": "balance_st",
+                    "type": "asset"
+                },
+                {
+                    "name": "balance_ut",
+                    "type": "asset"
+                },
+                {
+                    "name": "dividend",
+                    "type": "string"
+                },
+                {
+                    "name": "bond_yield",
+                    "type": "string"
+                },
+                {
+                    "name": "expr_yield",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "clear",
+            "base": "",
+            "fields": [
+                {
+                    "name": "issuer",
+                    "type": "name"
+                },
+                {
+                    "name": "creditor_id",
+                    "type": "int64"
+                },
+                {
+                    "name": "quant_st",
+                    "type": "asset"
+                },
+                {
+                    "name": "quant_ut",
+                    "type": "asset"
+                },
+                {
+                    "name": "dividend",
+                    "type": "string"
+                },
+                {
+                    "name": "bond_yield",
+                    "type": "string"
+                },
+                {
+                    "name": "expr_yield",
+                    "type": "string"
+                },
+                {
+                    "name": "memo",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "create",
+            "base": "",
+            "fields": [
+                {
+                    "name": "issuer",
+                    "type": "name"
+                },
+                {
+                    "name": "maximum_supply_st",
+                    "type": "asset"
+                },
+                {
+                    "name": "maximum_supply_ut",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "currency_stats",
+            "base": "",
+            "fields": [
+                {
+                    "name": "supply_st",
+                    "type": "asset"
+                },
+                {
+                    "name": "supply_ut",
+                    "type": "asset"
+                },
+                {
+                    "name": "max_supply_st",
+                    "type": "asset"
+                },
+                {
+                    "name": "max_supply_ut",
+                    "type": "asset"
+                },
+                {
+                    "name": "issuer",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "issue",
+            "base": "",
+            "fields": [
+                {
+                    "name": "issuer",
+                    "type": "name"
+                },
+                {
+                    "name": "quant_st",
+                    "type": "asset"
+                },
+                {
+                    "name": "quant_ut",
+                    "type": "asset"
+                },
+                {
+                    "name": "memo",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "retire",
+            "base": "",
+            "fields": [
+                {
+                    "name": "issuer",
+                    "type": "name"
+                },
+                {
+                    "name": "quant_st",
+                    "type": "asset"
+                },
+                {
+                    "name": "quant_ut",
+                    "type": "asset"
+                },
+                {
+                    "name": "memo",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "transfer",
+            "base": "",
+            "fields": [
+                {
+                    "name": "issuer",
+                    "type": "name"
+                },
+                {
+                    "name": "creditor_id",
+                    "type": "int64"
+                },
+                {
+                    "name": "quant_st",
+                    "type": "asset"
+                },
+                {
+                    "name": "quant_ut",
+                    "type": "asset"
+                },
+                {
+                    "name": "memo",
+                    "type": "string"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "clear",
+            "type": "clear",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "create",
+            "type": "create",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "issue",
+            "type": "issue",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "retire",
+            "type": "retire",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "transfer",
+            "type": "transfer",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "accounts",
+            "type": "account",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "stat",
+            "type": "currency_stats",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": []
+}
