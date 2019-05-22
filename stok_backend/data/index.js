@@ -40,9 +40,9 @@ const creditorClear = _.map(_.times(70), (i) => {
         creditor_id : 2000 + i,
         quant_st : '1000.0000 ST',
         quant_ut : '2000.0000 UT',
-        dividend : 20 + i,
-        bond_yield : 2.0 + i,
-        expr_yield : 10.1 + i,
+        dividend : '20' + i,
+        bond_yield : `${i}.0`,
+        expr_yield : `${i + 2}.00`,
         memo : '청산된 채권 정보'
     };
 });
