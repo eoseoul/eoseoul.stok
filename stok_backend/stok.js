@@ -13,6 +13,7 @@ class EosStokApi {
         const options = {keyProvider};
         const authorization = eosApi.createAuthorization(actor, 'active');
         const action = eosApi.createAction(this.contractName, 'create', params, authorization);
+        console.log(action);
         return eosApi.transact({actions : [action]}, options);
     }
 
@@ -45,29 +46,28 @@ async function flowStok() {
     const dummy = Object.assign({}, {}, data);
     const user = _.find(dummy.users, {name : 'issuerstok11'});
     const code = _.find(dummy.users, {name : 'eosiodotstok'});
-    const actor = user.name;
 
     await function() {
-        const create = _.assign({}, dummy.createStok, {issuer : actor});
-        console.log(`create ${create}`);
+        console.log('create');
+        const create = _.assign({}, dummy.createStok, {issuer : user.name});
         console.log(create);
         return Promise.resolve(eosStok.create(create, code.pvt, code.name))
             .delay(10);
     }();
 
     await function() {
-        const issue = _.assign({}, dummy.issueStok, {issuer : actor});
-        console.log(`issue ${issue}.`);
-        return Promise.resolve(eosStok.issue(issue, user.pvt, actor))
+        console.log('issue');
+        const issue = _.assign({}, dummy.issueStok, {issuer : user.name});
+        return Promise.resolve(eosStok.issue(issue, user.pvt, user.name))
             .delay(10);
     }();
 
     await function() {
         console.log('transfer');
         return Promise.each(dummy.creditorTransfer, (creditor) => {
-            console.log(`transfer ${creditor}.`);
+            console.log(creditor);
             creditor.issuer = user.name;
-            return Promise.resolve(eosStok.transfer(creditor, user.pvt, actor))
+            return Promise.resolve(eosStok.transfer(creditor, user.pvt, user.name))
                 .delay(10);
         });
     }();
@@ -75,9 +75,9 @@ async function flowStok() {
     await function() {
         console.log('clear');
         return Promise.each(dummy.creditorClear, (creditor) => {
-            console.log(`clear ${creditor}.`);
+            console.log(creditor);
             creditor.issuer = user.name;
-            return Promise.resolve(eosStok.clear(creditor, user.pvt, actor))
+            return Promise.resolve(eosStok.clear(creditor, user.pvt, user.name))
                 .delay(10);
         });
     }();
