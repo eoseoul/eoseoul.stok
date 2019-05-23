@@ -172,7 +172,7 @@ void token::add_balance( name issuer, int64_t creditor_id, asset quant_st, asset
    }
 }
 
-void token::clear( name issuer, int64_t creditor_id, asset quant_st, asset quant_ut, string dividend, string bond_yield, string expr_yield, string memo )
+void token::clear( name issuer, int64_t creditor_id, asset quant_st, asset quant_ut, string repayment, string bond_yield, string expr_yield, string memo )
 {
    require_auth( issuer );
    accounts acnts( _self, issuer.value );
@@ -187,7 +187,7 @@ void token::clear( name issuer, int64_t creditor_id, asset quant_st, asset quant
    check( quant_ut.symbol == acc.balance_ut.symbol, "UT symbol precision mismatch" );
    check( quant_ut.amount <= acc.balance_ut.amount, "UT quantity exceeds available balance");
 
-   check( dividend.size() <= 20, "dividend has more than 20 bytes" );
+   check( repayment.size() <= 20, "repayment has more than 20 bytes" );
    check( bond_yield.size() <= 10, "bond_yield has more than 10 bytes" );
    check( expr_yield.size() <= 10, "expr_yield has more than 10 bytes" );
    check( memo.size() <= 256, "memo has more than 256 bytes" );
@@ -195,7 +195,7 @@ void token::clear( name issuer, int64_t creditor_id, asset quant_st, asset quant
    acnts.modify( it, same_payer, [&]( auto& a ) {
       a.balance_st -= quant_st;
       a.balance_ut -= quant_ut;
-      a.dividend = dividend;
+      a.repayment = repayment;
       a.bond_yield = bond_yield;
       a.expr_yield = expr_yield;
    });

@@ -108,7 +108,7 @@ public:
                      int64_t creditor_id,
                      asset  quant_st,
                      asset  quant_ut,
-                     string dividend,
+                     string repayment,
                      string bond_yield,
                      string expr_yield,
                      string memo) {
@@ -117,7 +117,7 @@ public:
            ( "creditor_id", creditor_id )
            ( "quant_st", quant_st )
            ( "quant_ut", quant_ut )
-           ( "dividend", dividend )
+           ( "repayment", repayment )
            ( "bond_yield", bond_yield)
            ( "expr_yield", expr_yield)
            ( "memo", memo)
@@ -244,7 +244,7 @@ BOOST_FIXTURE_TEST_CASE( transfer_tests, eosio_token_tester ) try {
       ("creditor_id", 1)
       ("balance_st", "300.000 ST")
       ("balance_ut", "300.000 UT")
-      ("dividend", "")
+      ("repayment", "")
       ("bond_yield", "")
       ("expr_yield", "")
    );
@@ -281,7 +281,7 @@ BOOST_FIXTURE_TEST_CASE( retire_tests, eosio_token_tester ) try {
       ("creditor_id", 1)
       ("balance_st", "200 ST")
       ("balance_ut", "100 UT")
-      ("dividend", "")
+      ("repayment", "")
       ("bond_yield", "")
       ("expr_yield", "")
    );
@@ -313,7 +313,7 @@ BOOST_FIXTURE_TEST_CASE( clear_tests, eosio_token_tester ) try {
       ("creditor_id", 1)
       ("balance_st", "2 ST")
       ("balance_ut", "2 UT")
-      ("dividend", "")
+      ("repayment", "")
       ("bond_yield", "")
       ("expr_yield", "")
    );
@@ -331,7 +331,7 @@ BOOST_FIXTURE_TEST_CASE( clear_tests, eosio_token_tester ) try {
       ("creditor_id", 1)
       ("balance_st", "0 ST")
       ("balance_ut", "0 UT")
-      ("dividend", "2.0")
+      ("repayment", "2.0")
       ("bond_yield", "3.1")
       ("expr_yield", "4.1")
    );

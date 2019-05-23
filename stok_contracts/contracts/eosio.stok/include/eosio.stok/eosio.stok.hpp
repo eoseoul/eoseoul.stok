@@ -40,7 +40,7 @@ namespace eosio {
                      int64_t creditor_id,
                      asset   quant_st,
                      asset   quant_ut,
-                     string  dividend,
+                     string  repayment,
                      string  bond_yield,
                      string  expr_yield,
                      string  memo);
@@ -50,7 +50,7 @@ namespace eosio {
             int64_t creditor_id;
             asset   balance_st;
             asset   balance_ut;
-            string  dividend;
+            string  repayment;
             string  bond_yield;
             string  expr_yield;
 
