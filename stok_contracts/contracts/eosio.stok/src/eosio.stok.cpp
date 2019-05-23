@@ -87,10 +87,10 @@ void token::transfer( name issuer, int64_t creditor_id, asset quant_st, asset qu
     check( memo.size() <= 256, "memo has more than 256 bytes" );
 
     check( quant_st.is_valid(), "invalid ST quantity" );
-    check( quant_st.amount > 0, "must issue positive ST quantity" );
+    check( quant_st.amount >= 0, "must >=0 ST quantity" );
 
     check( quant_ut.is_valid(), "invalid UT quantity" );
-    check( quant_ut.amount > 0, "must issue positive UT quantity" );
+    check( quant_ut.amount >= 0, "must >=0 UT quantity" );
 
     check( quant_st.symbol == st.supply_st.symbol, "ST symbol precision mismatch" );
     check( quant_ut.symbol == st.supply_ut.symbol, "UT symbol precision mismatch" );
@@ -123,10 +123,10 @@ void token::retire( name issuer, int64_t creditor_id, asset quant_st, asset quan
     check( memo.size() <= 256, "memo has more than 256 bytes" );
 
     check( quant_st.is_valid(), "invalid ST quantity" );
-    check( quant_st.amount >= 0, "must retire >=0 ST quantity" );
+    check( quant_st.amount >= 0, "must >=0 ST quantity" );
 
     check( quant_ut.is_valid(), "invalid UT quantity" );
-    check( quant_ut.amount >= 0, "must retire >=0 UT quantity" );
+    check( quant_ut.amount >= 0, "must >=0 UT quantity" );
 
     /*
     check( quant_st.symbol == st.supply_st.symbol, "ST symbol precision mismatch" );
