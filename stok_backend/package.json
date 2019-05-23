@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=development NODE_PATH=. node ./index"
+    "start": "NODE_ENV=development NODE_PATH=. node ./index",
+    "startj": "NODE_ENV=jungle NODE_PATH=. node ./index"
   },
   "dependencies": {
     "binaryen": "^37.0.0",

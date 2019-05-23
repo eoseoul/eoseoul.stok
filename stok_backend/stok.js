@@ -2,12 +2,17 @@
 
 let Promise = require('bluebird'),
     _ = require('lodash'),
+    util = require('util'),
+    config = require('config'),
     eosApi = require('external_apis/eos_api'),
     data = require('./data');
 
+const contract = config.eosNode.contract;
+const issuer = config.eosNode.issuer;
+
 class EosStokApi {
     constructor() {
-        this.contractName = 'eosiodotstok';
+        this.contractName = contract;
     }
     create(params, keyProvider, actor) {
         const options = {keyProvider};
@@ -31,21 +36,32 @@ class EosStokApi {
         return eosApi.transact({actions : [action]}, options);
     }
 
+    retire(params, keyProvider, actor) {
+        const options = {keyProvider};
+        const authorization = eosApi.createAuthorization(actor, 'active');
+        const action = eosApi.createAction(this.contractName, 'retire', params, authorization);
+        return eosApi.transact({actions : [action]}, options);
+    }
+
     clear(params, keyProvider, actor) {
         const options = {keyProvider};
         const authorization = eosApi.createAuthorization(actor, 'active');
         const action = eosApi.createAction(this.contractName, 'clear', params, authorization);
         return eosApi.transact({actions : [action]}, options);
     }
-
 }
 
 const eosStok = new EosStokApi();
 
 async function flowStok() {
     const dummy = Object.assign({}, {}, data);
-    const user = _.find(dummy.users, {name : 'issuerstok11'});
-    const code = _.find(dummy.users, {name : 'eosiodotstok'});
+
+    const user = _.find(dummy.users, {name : issuer});
+    const code = _.find(dummy.users, {name : contract});
+
+    const transfers = [];
+    const retires = [];
+    const clears = [];
 
     await function() {
         console.log('create');
@@ -68,7 +84,23 @@ async function flowStok() {
             console.log(creditor);
             creditor.issuer = user.name;
             return Promise.resolve(eosStok.transfer(creditor, user.pvt, user.name))
-                .delay(10);
+                .delay(10)
+                .then((trx) => {
+                    transfers.push({creditor_id : creditor.creditor_id, trx_id : trx.transaction_id});
+                });
+        });
+    }();
+
+    await function() {
+        console.log('retire');
+        return Promise.each(dummy.creditorRetire, (creditor) => {
+            console.log(creditor);
+            creditor.issuer = user.name;
+            return Promise.resolve(eosStok.transfer(creditor, user.pvt, user.name))
+                .delay(10)
+                .then((trx) => {
+                    retires.push({creditor_id : creditor.creditor_id, trx_id : trx.transaction_id});
+                });
         });
     }();
 
@@ -78,9 +110,16 @@ async function flowStok() {
             console.log(creditor);
             creditor.issuer = user.name;
             return Promise.resolve(eosStok.clear(creditor, user.pvt, user.name))
-                .delay(10);
+                .delay(10)
+                .then((trx) => {
+                    clears.push({creditor_id : creditor.creditor_id, trx_id : trx.transaction_id});
+                });
         });
     }();
+
+    console.log(util.inspect(transfers, {depth : 3}));
+    console.log(util.inspect(retires, {depth : 3}));
+    console.log(util.inspect(clears, {depth : 3}));
 }
 
 module.exports = exports = { flowStok };

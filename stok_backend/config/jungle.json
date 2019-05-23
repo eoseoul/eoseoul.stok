@@ -1,0 +1,12 @@
+{
+    "timezone" : "+00:00",
+    "eosNode" : {    // server to server
+        "contract" : "testdotstok1",
+        "issuer" : "testissuer12",
+        "systemAccount" : "eosio",
+        "symbol" : "EOS",
+        "eosioPriKey" : "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3",
+        "chainId" : "e70aaab8997e1dfce58fbfac80cbbb8fecec7b99cf982a9444273cbc64c41473",
+        "endpoints" : ["http://jungle2.cryptolions.io"]
+    }
+}

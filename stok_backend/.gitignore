@@ -2,5 +2,6 @@ node_modules
 coverage
 .DS_Store
 !/log/dummy
+doc/*
 public/images/
 package-lock.json
