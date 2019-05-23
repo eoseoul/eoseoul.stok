@@ -20,7 +20,7 @@
                     "type": "asset"
                 },
                 {
-                    "name": "dividend",
+                    "name": "repayment",
                     "type": "string"
                 },
                 {
@@ -54,7 +54,7 @@
                     "type": "asset"
                 },
                 {
-                    "name": "dividend",
+                    "name": "repayment",
                     "type": "string"
                 },
                 {
