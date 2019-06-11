@@ -37,7 +37,7 @@ async function deployContract(account, contractPath, authorizations, options) {
             const retCode = await setcode(account, 0, 0, wasm, authorizations, options)
                 .catch((err) => {
                     if (err.error && err.error.code === 3160008) { //Contract is already running this version of code
-                        return err.error.code;
+                        return err.code;
                     }
                 });
             const retAbi = await setabi(account, wrappedEosApi.getAbiHex(abi), authorizations, options);
@@ -192,7 +192,7 @@ function wrap(EosApi) {
                         .catch((err) => {
                             err.endpoint = eosApi.options.httpEndpoint;
                             err.endpoints = endpoints;
-                            console.log(err);
+                            // console.log(err.json);
                             if (err.status === 502 || err.status === 429 || (err.name === 'TypeError' && err.message === 'Failed to fetch') || err.code === 'ENOTFOUND' || err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
                                 const endpoint = endpoints.shift();
                                 endpoints = endpoints.concat([endpoint]);

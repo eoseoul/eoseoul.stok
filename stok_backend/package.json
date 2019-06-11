@@ -12,6 +12,7 @@
     "config": "^1.31.0",
     "eosjs": "^20.0.0",
     "lodash": "^4.17.11",
+    "minimist": "^1.2.0",
     "node-fetch": "^2.3.0",
     "request": "^2.88.0"
   },
