@@ -2,7 +2,6 @@
 
 let Promise = require('bluebird'),
     _ = require('lodash'),
-    util = require('util'),
     parseArgs = require('minimist'),
     path = require('path'),
     config = require('config'),
@@ -123,7 +122,7 @@ function transfers() {
         console.log(creditor);
         creditor.issuer = user.name;
         return Promise.resolve(eosStok.transfer(creditor, user.pvt, user.name))
-            .delay(100)
+            .delay(200)
             .then((trx) => {
                 const result = {creditor_id : creditor.creditor_id, trx_id : trx.transaction_id};
                 console.log(result);
@@ -139,7 +138,7 @@ function transfers() {
             });
     })
     .then((results) => {
-        console.log(util.inspect(JSON.stringify(results, {depth : 3})));
+        console.log(JSON.stringify(transfers));
     });
 }
 
@@ -150,7 +149,7 @@ function retires() {
         console.log(creditor);
         creditor.issuer = user.name;
         return Promise.resolve(eosStok.retire(creditor, user.pvt, user.name))
-            .delay(100)
+            .delay(200)
             .then((trx) => {
                 const result = {creditor_id : creditor.creditor_id, trx_id : trx.transaction_id};
                 console.log(result);
@@ -166,7 +165,7 @@ function retires() {
             });
     })
     .then((results) => {
-        console.log(util.inspect(JSON.stringify(results, {depth : 3})));
+        console.log(JSON.stringify(retires));
     });
 }
 
@@ -177,7 +176,7 @@ function clears() {
         console.log(creditor);
         creditor.issuer = user.name;
         return Promise.resolve(eosStok.clear(creditor, user.pvt, user.name))
-            .delay(100)
+            .delay(200)
             .then((trx) => {
                 const result = {creditor_id : creditor.creditor_id, trx_id : trx.transaction_id};
                 console.log(result);
@@ -193,6 +192,6 @@ function clears() {
             });
     })
     .then((results) => {
-        console.log(util.inspect(JSON.stringify(results, {depth : 3})));
+        console.log(JSON.stringify(clears));
     });
 }

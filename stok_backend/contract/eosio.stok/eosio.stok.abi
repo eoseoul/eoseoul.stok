@@ -194,7 +194,7 @@
         {
             "name": "clear",
             "type": "clear",
-            "ricardian_contract": ""
+            "ricardian_contract": "# Action - `{{ clear }}` ## Description The intent of the `{{ clear }}` action 상환일에 실행합니다. {{ issuer }} 토큰 발생 계정, {{ creditor_id }} 고객 계좌번호, {{ quant_st }} 청산할 ST 토큰수, {{ quant_ut }} 청산할 UT 토큰 수, {{ repayment }} 상환금, {{ bond_yield }} 채권 수익율, {{ expr_yield }} 체감 수익율"
         },
         {
             "name": "create",
@@ -209,12 +209,12 @@
         {
             "name": "retire",
             "type": "retire",
-            "ricardian_contract": ""
+            "ricardian_contract": "# Action - `{{ retire }}`  ## Description The intent of the `{{ retire }}` action 현장 참석자 명단을 작성하여, 일괄 회수처리 합니다. {{ issuer }} 토큰 발생 계정, {{ creditor_id }} 고객 계좌번호, {{ quant_st }} 회수될 ST 토큰수, {{ quant_ut }} 회수될 UT 토큰 수"
         },
         {
             "name": "transfer",
             "type": "transfer",
-            "ricardian_contract": ""
+            "ricardian_contract": "# Action - `{{ tranfer }}`  ## Description The intent of the `{{ tranfer }}` action 은 오픈트레이드에서 투자한 구좌수 만큼 토큰을 일괄 지급합니다. {{ issuer }} 토큰 발생 계정, {{ creditor_id }} 고객 계좌번호, {{ quant_st }} 구입한 ST 토큰수, {{ quant_ut }} 구입한 UT 토큰 수"
         }
     ],
     "tables": [
@@ -233,6 +233,12 @@
             "key_types": []
         }
     ],
-    "ricardian_clauses": [],
+    "ricardian_clauses": [{
+        "id" : "content",
+        "body" : "# *투자 및 증권 관련 내용  1. 회사의 상호: 스톰팩토리크라우드펀딩 주식회사  2. 사채의 명칭: 스톰팩토리크라우드펀딩제1회 무보증 이익참가부사채  3. 권면가액: 팔만오천원정  4. 사채의 이율: 표면금리 연 0%  5. 이자지급의 방법과 기한:  - 이자 계산기간: 2019년 6월 28일 ~ 2019년 7월 27일  - 이자 지급일: 2019년 7월 29일  - 지급방법: 투자자의 ‘오픈투자계좌’로 개별 입금  - 연체이자: 서울에 본점을 둔 시중은행 연체대출이율 중 최고 이율 적용  6. 기타 사항  이익참가부사채 배정을 받은 청약자에게는 EOS 블록체인 기반의 토큰이 다음과 같이 부여됩니다.  - 토큰 명칭 : TRI  - TRIUT: 강연에 참여할 수 있는 유틸리티 토큰으로서, 이익참가부사채 1구좌당 1 UT가 지급됩니다.  - TRIST: 이익참가부사채의 상세내용을 담은 토큰으로서, 이익참가부사채 1구좌당 1 ST가 지급됩니다. 동 토큰은 금전지급의 대가로 지급되는 것이 아니고 이익참가부 사채의 내용을 열람할 목적으로 발행된 토큰으로서, 별도의 증권이 아니기에 양도, 질권설정 등의 대상이 될 수 없습니다."
+        }, {
+        "id" : "hash",
+        "body" : "SIG_K1_K2yGVHhNFxrYscfRTGXZz2RpYjZ3dVCYkHSp8fdZx4cMa2qHuKgz3kguMP3dQs9vvgr1GrfVSnfKg4r29MvUhx4Jqzv51E"
+    }],
     "variants": []
 }
