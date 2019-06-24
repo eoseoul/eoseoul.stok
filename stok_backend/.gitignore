@@ -4,6 +4,6 @@ coverage
 !/log/dummy
 doc/*
 public/images/
-config/*
-files/*
+config/production.json
+files/production/*
 package-lock.json
