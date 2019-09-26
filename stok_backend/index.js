@@ -2,6 +2,7 @@
 
 let Promise = require('bluebird'),
     _ = require('lodash'),
+    util = require('util'),
     parseArgs = require('minimist'),
     path = require('path'),
     config = require('config'),
@@ -24,7 +25,7 @@ Promise.resolve(build())
         console.log('build complete~~');
     })
     .catch((err) => {
-        console.log(err);
+        console.log(util.inspect(err, {depth : 5}));
     })
     .delay(500);
 
